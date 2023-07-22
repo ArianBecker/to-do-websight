@@ -67,5 +67,16 @@ def add_to_do():
             pass
         return render_template("success.html", task=new_task)
 
+
+@app.route("/add_user", methods=["GET", "POST"])
+def add_user():
+    form = UserForm()
+    if request.method == "GET":
+        return render_template("add_to_do.html", form=form)
+    elif request.method == "POST":
+        pass
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
