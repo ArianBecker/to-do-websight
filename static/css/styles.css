@@ -1,0 +1,14 @@
+.expand {
+    display: inline-block;
+    width: 100px;
+}
+
+.custom-header {
+    background-color: #ffde25;
+}
+
+xy-expand {
+    display: inline-block;
+    width: 50px;
+    height: 60px;
+}
