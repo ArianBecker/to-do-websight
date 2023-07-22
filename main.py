@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from forms import *
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -74,8 +75,17 @@ def add_user():
     if request.method == "GET":
         return render_template("add_to_do.html", form=form)
     elif request.method == "POST":
-        pass
-
+        with app.app_context():
+            new_id = len(User.query.all()) + 1
+        new_name = form.name.data
+        new_email = form.email.data
+        new_password = generate_password_hash(form.password.data, method="sha256", salt_length=16)
+        new_user = User(id=new_id, name=new_name, email=new_email, password=new_password)
+        with app.app_context():
+            with app.app_context():
+                db.session.add(new_user)
+                db.session.commit()
+        return render_template("success.html", task=new_name)
 
 
 if __name__ == "__main__":
