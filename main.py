@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
+from forms import *
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -49,6 +51,21 @@ class ToDo(db.Model):
 @app.route("/")
 def home_page():
     return render_template("index.html")
+
+
+@app.route("/add_to_do", methods=["GET", "POST"])
+def add_to_do():
+    form = ToDoForm()
+    if request.method == "GET":
+        return render_template("add_to_do.html", form=form)
+    elif request.method == "POST":
+        new_task = form.name.data
+        new_description = form.description.data
+        new_is_done = form.is_done.data
+        new_date_created = datetime.today()
+        with app.app_context():
+            pass
+        return render_template("success.html", task=new_task)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

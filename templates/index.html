@@ -2,16 +2,13 @@
 <html lang="en">
 
 <head>
-
     <title>To Do Tracker</title>
     <link rel="icon" type="image/x-icon" href="static/img/to_do_list_icon.png">
     <link rel="stylesheet" href="static/img/to_do_list_icon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!-- Head content, including Bootstrap CSS, goes here -->
 </head>
-
 <body>
-
 {% include "header.html" %}
 {% include "login.html" %}
     <!-- Main Content -->
@@ -19,7 +16,7 @@
         <div class="row">
             <div class="col-md-1">
                 <!-- Create Button -->
-                <button class="btn btn-success btn-block expand">Create</button>
+                <a href="{{ url_for('add_to_do') }}"><button class="btn btn-success btn-block expand">Create</button></a>
             </div>
             <div class="col-md-1">
                 <!-- Edit Button -->

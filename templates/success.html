@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Success</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    {% include "header.html" %}
+    <h1 class="stretch middle"> {{ task }} was added to your to do list</h1>
+    <h3 class="middle tx-yellow"><a href=" {{ url_for('home_page') }}"> Return Home </a></h3>
+</body>
+</html>

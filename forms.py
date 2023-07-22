@@ -4,9 +4,10 @@ from wtforms.validators import DataRequired
 
 
 class ToDoForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
+    name = StringField("Activity", validators=[DataRequired()])
     description = StringField("Description", validators=[DataRequired()])
-    is_done = BooleanField("Finished", validators=[DataRequired()])
+    is_done = BooleanField("Finished")
+    submit = SubmitField()
 
 
 
