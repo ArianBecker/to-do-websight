@@ -4,6 +4,8 @@ from flask_bootstrap import Bootstrap
 from forms import *
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, login_user, login_required, current_user, logout_user
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -86,6 +88,8 @@ def add_user():
                 db.session.add(new_user)
                 db.session.commit()
         return render_template("success.html", task=new_name)
+
+
 
 
 if __name__ == "__main__":
