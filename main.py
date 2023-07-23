@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from forms import *
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, login_user, login_required, current_user, logout_user
+from flask_login import UserMixin, login_user, login_required, current_user, logout_user, LoginManager
 
 
 app = Flask(__name__)
@@ -15,6 +15,15 @@ Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/becke/PycharmProjects/Day 88/todo.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    with app.app_context():
+        user = User.query.get(user_id)
+    return user
 
 
 class User(db.Model):
@@ -89,7 +98,17 @@ def add_user():
                 db.session.commit()
         return render_template("success.html", task=new_name)
 
-
+@app.route("/login")
+def login():
+    login_form = LoginForm()
+    if request.method == "GET":
+        return render_template("login.html", form=login_form)
+    elif request.method == "POST":
+        if check_password_hash():
+            login_email = login_form.email.data
+            return render_template("login_success.html")
+    else:
+        return "Login Failure"
 
 
 if __name__ == "__main__":
