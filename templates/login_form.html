@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+{% include "header.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+<div class="container-fluid n">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 stretch"><h1>Login</h1></div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+        {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+</div>
+</body>
+</html>

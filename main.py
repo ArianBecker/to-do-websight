@@ -19,6 +19,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+
 @login_manager.user_loader
 def load_user(user_id):
     with app.app_context():
@@ -26,7 +27,7 @@ def load_user(user_id):
     return user
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
@@ -98,14 +99,19 @@ def add_user():
                 db.session.commit()
         return render_template("success.html", task=new_name)
 
-@app.route("/login")
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
     login_form = LoginForm()
     if request.method == "GET":
-        return render_template("login.html", form=login_form)
+        return render_template("login_form.html", form=login_form)
     elif request.method == "POST":
-        if check_password_hash():
-            login_email = login_form.email.data
+        email_input = login_form.email.data
+        with app.app_context():
+            requested_user = User.query.filter_by(email=email_input).first()
+            print(requested_user.name)
+        if check_password_hash(requested_user.password, login_form.password.data):
+            login_user(requested_user)
             return render_template("login_success.html")
     else:
         return "Login Failure"
