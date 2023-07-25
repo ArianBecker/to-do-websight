@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from forms import *
@@ -66,22 +66,40 @@ def home_page():
     if current_user.is_authenticated:
         with app.app_context():
             current_todos = ToDo.query.filter_by(user_id=current_user.id).all()
-    return render_template("index.html", todos=current_todos)
+            user = current_user
+    else:
+        user = []
+    return render_template("index.html", todos=current_todos, user=user)
 
 
 @app.route("/add_to_do", methods=["GET", "POST"])
 def add_to_do():
     form = ToDoForm()
-    if request.method == "GET":
-        return render_template("add_to_do.html", form=form)
-    elif request.method == "POST":
-        new_task = form.name.data
-        new_description = form.description.data
-        new_is_done = form.is_done.data
-        new_date_created = datetime.today()
-        with app.app_context():
-            pass
-        return render_template("success.html", task=new_task)
+    if current_user.is_authenticated:
+        if request.method == "GET":
+            return render_template("add_to_do.html", form=form)
+        elif request.method == "POST":
+            with app.app_context():
+                new_id = len(ToDo.query.all())
+            new_task = form.name.data
+            new_description = form.description.data
+            new_is_done = form.is_done.data
+            new_date_created = datetime.today()
+            new_todo = ToDo(
+                id=new_id,
+                user=current_user.id,
+                name=new_task,
+                description=new_description,
+                is_done=new_is_done,
+                date_created=new_date_created,
+                date_completed=new_date_created
+            )
+            with app.app_context():
+                db.session.add(new_todo)
+                db.session.commit()
+            return render_template("success.html", task=new_task)
+    else:
+        return redirect(url_for("login"))
 
 
 @app.route("/add_user", methods=["GET", "POST"])
@@ -118,6 +136,16 @@ def login():
             return render_template("login_success.html")
     else:
         return "Login Failure"
+
+
+@app.route("/logout")
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+        return "you have successfully logged out"
+    else:
+        flash(message="You are not currently logged in", category="message")
+        return redirect(url_for("home_page"))
 
 
 if __name__ == "__main__":
