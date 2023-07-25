@@ -6,10 +6,10 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, login_required, current_user, logout_user, LoginManager
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap(app)
+
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/becke/PycharmProjects/Day 88/todo.db'
@@ -17,7 +17,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 
 
 @login_manager.user_loader
@@ -63,7 +62,11 @@ class ToDo(db.Model):
 
 @app.route("/")
 def home_page():
-    return render_template("index.html")
+    current_todos = []
+    if current_user.is_authenticated:
+        with app.app_context():
+            current_todos = ToDo.query.filter_by(user_id=current_user.id).all()
+    return render_template("index.html", todos=current_todos)
 
 
 @app.route("/add_to_do", methods=["GET", "POST"])
@@ -89,8 +92,8 @@ def add_user():
     elif request.method == "POST":
         with app.app_context():
             new_id = len(User.query.all()) + 1
-        new_name = form.name.data
-        new_email = form.email.data
+        new_name = form.name.data.title()
+        new_email = form.email.data.lower()
         new_password = generate_password_hash(form.password.data, method="sha256", salt_length=16)
         new_user = User(id=new_id, name=new_name, email=new_email, password=new_password)
         with app.app_context():
@@ -106,7 +109,7 @@ def login():
     if request.method == "GET":
         return render_template("login_form.html", form=login_form)
     elif request.method == "POST":
-        email_input = login_form.email.data
+        email_input = login_form.email.data.lower()
         with app.app_context():
             requested_user = User.query.filter_by(email=email_input).first()
             print(requested_user.name)
